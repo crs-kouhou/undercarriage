@@ -28,21 +28,22 @@ public:
       setting_frame_publisher_ = this->create_publisher<robomas_plugins::msg::RobomasFrame>("robomas_frame", 10);
       motors.push_back({
         Motor(1.0, 0.0, 0,this->now()),
-        this->create_publisher<robomas_plugins::msg::RobomasTarget>("robomas_target0", 10)
-      });
-      motors.push_back({
-        Motor(-0.5, -Constants::Math::cos30, 1,this->now()),
         this->create_publisher<robomas_plugins::msg::RobomasTarget>("robomas_target1", 10)
       });
       motors.push_back({
-        Motor(-0.5, Constants::Math::cos30, 2,this->now()),
+        Motor(-0.5, -Constants::Math::cos30, 1,this->now()),
         this->create_publisher<robomas_plugins::msg::RobomasTarget>("robomas_target2", 10)
+      });
+      motors.push_back({
+        Motor(-0.5, Constants::Math::cos30, 2,this->now()),
+        this->create_publisher<robomas_plugins::msg::RobomasTarget>("robomas_target3", 10)
       });
   }
 
 private:
   void joy_callback(const sensor_msgs::msg::Joy &msg)
   {
+    RCLCPP_INFO(this->get_logger(), "joy callback.");
     if(msg.buttons[7]){//startボタン
       this_robot_mode = robot_mode::controller;
       for(auto& one_motor : this->motors){
@@ -62,6 +63,7 @@ private:
       }
     }
     if(this_robot_mode == robot_mode::controller){
+      RCLCPP_INFO(this->get_logger(), "in controller mode.");
       target_vector.x = msg.axes[0];
       target_vector.y = msg.axes[1];
       float rotation = 0.0f;
@@ -74,6 +76,7 @@ private:
       for(auto& one_motor : motors){
         robomas_plugins::msg::RobomasTarget target_msg;
         target_msg.target  = one_motor.first.update(target_vector * one_motor.first.get_vec2d() * Constants::Undercarriage::ROBOT_VELOCITY + rotation, this->now());
+        RCLCPP_INFO(this->get_logger(), "publish.");
         one_motor.second->publish(target_msg);
       }
     }
@@ -81,8 +84,8 @@ private:
 
   void auto_move_callback(const ac_semi_2025::msg::Pose2d &msg){
     if(this_robot_mode == robot_mode::automode){
-      target_vector.x = msg.x;
-      target_vector.y = msg.y;
+      target_vector.x = -msg.y;
+      target_vector.y = msg.x;
       for(auto& one_motor : motors){
         robomas_plugins::msg::RobomasTarget target_msg;
         target_msg.target  = one_motor.first.update(target_vector * one_motor.first.get_vec2d() * Constants::Undercarriage::ROBOT_AUTOMODE_VELOCITY + msg.th * Constants::Undercarriage::ROBOT_AUTOMODE_ROTATION_VELOCITY, this->now());
