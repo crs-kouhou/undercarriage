@@ -43,7 +43,7 @@ public:
 private:
   void joy_callback(const sensor_msgs::msg::Joy &msg)
   {
-    RCLCPP_INFO(this->get_logger(), "joy callback.");
+    // RCLCPP_INFO(this->get_logger(), "joy callback.");
     if(msg.buttons[7]){//startボタン
       this_robot_mode = robot_mode::controller;
       for(auto& one_motor : this->motors){
@@ -63,7 +63,7 @@ private:
       }
     }
     if(this_robot_mode == robot_mode::controller){
-      RCLCPP_INFO(this->get_logger(), "in controller mode.");
+      // RCLCPP_INFO(this->get_logger(), "in controller mode.");
       target_vector.x = msg.axes[0];
       target_vector.y = msg.axes[1];
       float rotation = 0.0f;
@@ -76,7 +76,7 @@ private:
       for(auto& one_motor : motors){
         robomas_plugins::msg::RobomasTarget target_msg;
         target_msg.target  = one_motor.first.update(target_vector * one_motor.first.get_vec2d() * Constants::Undercarriage::ROBOT_VELOCITY + rotation, this->now());
-        RCLCPP_INFO(this->get_logger(), "publish.");
+        // RCLCPP_INFO(this->get_logger(), "publish.");
         one_motor.second->publish(target_msg);
       }
     }
@@ -84,8 +84,12 @@ private:
 
   void auto_move_callback(const ac_semi_2025::msg::Pose2d &msg){
     if(this_robot_mode == robot_mode::automode){
-      target_vector.x = -msg.y;
-      target_vector.y = msg.x;
+      if(std::isnan(target_vector.x)||std::isnan(target_vector.y)){
+        return;
+      }
+
+      target_vector.x = msg.x;
+      target_vector.y = msg.y;
       for(auto& one_motor : motors){
         robomas_plugins::msg::RobomasTarget target_msg;
         target_msg.target  = one_motor.first.update(target_vector * one_motor.first.get_vec2d() * Constants::Undercarriage::ROBOT_AUTOMODE_VELOCITY + msg.th * Constants::Undercarriage::ROBOT_AUTOMODE_ROTATION_VELOCITY, this->now());
