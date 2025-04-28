@@ -84,11 +84,11 @@ private:
 
   void auto_move_callback(const ac_semi_2025::msg::Pose2d &msg){
     if(this_robot_mode == robot_mode::automode){
-      if(std::isnan(target_vector.x)||std::isnan(target_vector.y)){
+      if(std::isnan(msg.x)||std::isnan(msg.y)){
         return;
       }
 
-      target_vector.x = msg.x;
+      target_vector.x = -msg.x;
       target_vector.y = msg.y;
       for(auto& one_motor : motors){
         robomas_plugins::msg::RobomasTarget target_msg;

@@ -53,34 +53,34 @@ public:
 
     float update(float target_speed, const rclcpp::Time current_time)
     {
-        // dt = (current_time - last_time).seconds();
-        // last_time = current_time;
-        // if (dt <= 0)
-        // {
-        //     RCLCPP_WARN(rclcpp::get_logger("Motor"), "Invalid time difference: %f", dt);
-        //     return last_speed;
-        // }
-        // if (target_speed > MAX_SPEED)
-        // {
-        //     target_speed = MAX_SPEED;
-        // }
-        // else if (target_speed < -MAX_SPEED)
-        // {
-        //     target_speed = -MAX_SPEED;
-        // }
-        // float acceleration = (target_speed - last_speed) / dt;
-        // if (acceleration > MAX_ACCELERATION)
-        // {
-        //     acceleration = MAX_ACCELERATION;
-        // }
-        // else if (acceleration < -MAX_ACCELERATION)
-        // {
-        //     acceleration = -MAX_ACCELERATION;
-        // }
-        // last_speed += acceleration * dt;
+        dt = (current_time - last_time).seconds();
+        last_time = current_time;
+        if (dt <= 0)
+        {
+            RCLCPP_WARN(rclcpp::get_logger("Motor"), "Invalid time difference: %f", dt);
+            return last_speed;
+        }
+        if (target_speed > MAX_SPEED)
+        {
+            target_speed = MAX_SPEED;
+        }
+        else if (target_speed < -MAX_SPEED)
+        {
+            target_speed = -MAX_SPEED;
+        }
+        float acceleration = (target_speed - last_speed) / dt;
+        if (acceleration > MAX_ACCELERATION)
+        {
+            acceleration = MAX_ACCELERATION;
+        }
+        else if (acceleration < -MAX_ACCELERATION)
+        {
+            acceleration = -MAX_ACCELERATION;
+        }
+        last_speed += acceleration * dt;
 
-        // return last_speed;
-        return target_speed;
+        return last_speed;
+        // return target_speed;
 
     }
 
