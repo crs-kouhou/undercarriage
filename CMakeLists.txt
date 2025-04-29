@@ -15,7 +15,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(robomas_plugins REQUIRED)
-find_package(ac_semi_2025 REQUIRED)
+find_package(ac25_test REQUIRED)
 
 
 include_directories(
@@ -24,7 +24,7 @@ include_directories(
 )
 
 add_executable(undercarriage src/undercarriage.cpp)
-ament_target_dependencies(undercarriage rclcpp sensor_msgs robomas_plugins ac_semi_2025)
+ament_target_dependencies(undercarriage rclcpp sensor_msgs robomas_plugins ac25_test)
 
 ament_export_include_directories(include)
 

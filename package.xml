@@ -8,7 +8,7 @@
   <license>Apache-2.0</license>
 
   <depend>robomas_plugins</depend>
-  <depend>ac_semi_2025</depend>
+  <depend>ac25_test</depend>
 
   <test_depend>rclcpp</test_depend>
   <test_depend>sensor_msgs</test_depend>

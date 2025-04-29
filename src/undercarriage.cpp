@@ -6,7 +6,7 @@
 #include "robomas_plugins/msg/robomas_frame.hpp"
 #include "robomas_plugins/msg/robomas_target.hpp"
 #include "robomas_plugins/msg/frame.hpp"
-#include "ac_semi_2025/msg/pose2d.hpp"
+#include "ac25_test/msg/pose2d.hpp"
 // #include "controllernode/msg/autotarget.hpp"
 
 using std::placeholders::_1;
@@ -23,7 +23,7 @@ public:
   {
     joy_subscription_ = this->create_subscription<sensor_msgs::msg::Joy>(
       "joy", 10, std::bind(&Undercarriage_Node::joy_callback, this, _1));
-      auto_move_subscription_ = this->create_subscription<ac_semi_2025::msg::Pose2d>(
+      auto_move_subscription_ = this->create_subscription<ac25_test::msg::Pose2d>(
       "robot_speed", 10, std::bind(&Undercarriage_Node::auto_move_callback, this, _1));
       setting_frame_publisher_ = this->create_publisher<robomas_plugins::msg::RobomasFrame>("robomas_frame", 10);
       motors.push_back({
@@ -82,7 +82,7 @@ private:
     }
   }
 
-  void auto_move_callback(const ac_semi_2025::msg::Pose2d &msg){
+  void auto_move_callback(const ac25_test::msg::Pose2d &msg){
     if(this_robot_mode == robot_mode::automode){
       if(std::isnan(msg.x)||std::isnan(msg.y)){
         return;
@@ -114,7 +114,7 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_subscription_;
   rclcpp::Publisher<robomas_plugins::msg::RobomasFrame>::SharedPtr setting_frame_publisher_;
-  rclcpp::Subscription<ac_semi_2025::msg::Pose2d>::SharedPtr auto_move_subscription_;
+  rclcpp::Subscription<ac25_test::msg::Pose2d>::SharedPtr auto_move_subscription_;
   std::vector<std::pair<Motor,rclcpp::Publisher<robomas_plugins::msg::RobomasTarget>::SharedPtr>> motors;
   // bool robot_mode = false;
   robot_mode this_robot_mode = robot_mode::disable;
