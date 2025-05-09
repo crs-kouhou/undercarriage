@@ -88,8 +88,11 @@ private:
         return;
       }
 
-      target_vector.x = -msg.x;
-      target_vector.y = msg.y;
+      // 以降、進行方向右をx, 進行方向をyとする。
+      // 受け取るのは進行方向右が-y, 進行方向をxとしている。 
+      target_vector.x = msg.y;
+      // target_vector.x = -msg.y;
+      target_vector.y = msg.x;
       for(auto& one_motor : motors){
         robomas_plugins::msg::RobomasTarget target_msg;
         target_msg.target  = one_motor.first.update(target_vector * one_motor.first.get_vec2d() * Constants::Undercarriage::ROBOT_AUTOMODE_VELOCITY + msg.th * Constants::Undercarriage::ROBOT_AUTOMODE_ROTATION_VELOCITY, this->now());
